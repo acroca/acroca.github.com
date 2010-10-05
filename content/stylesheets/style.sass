@@ -1,0 +1,71 @@
+$bg_color: #FFF
+$content_sep_color: #DDF
+$titles_color: #002
+$font_color: #000
+$link_color: #066
+
+
+// BASE DESIGN
+  
+body
+  :background-color $bg_color
+  background:
+    :image url("../images/stripe.png")
+    :repeat repeat-x
+  :color $font_color
+  font:
+    :family Georgia
+    :size 14px
+a
+  :text-decoration underline
+  :color $link_color
+
+h1, h2, h3
+  :font-weight bold
+h1
+  :font-size 2.8em
+h2
+  :font-size 2.3em
+  :margin-bottom 0.5em
+h3
+  :font-size 1.5em
+
+#header
+  :text-align center
+  :padding 2.5em 0
+
+#content
+  :padding 1em 0
+  border:
+    :top 1px
+    :bottom 1px
+    :color $content_sep_color
+    :style solid
+  
+
+#footer
+  :text-align right
+  :margin-top 2em
+  :margin-bottom 2em
+
+
+// Custom content design
+#header h1 span.small
+  :font-size 0.5em
+  :display block
+
+#content
+  padding-bottom: 2em
+  p
+    :padding-bottom 1em
+    :line-height 150%
+  hr
+    :height 1px
+    :background-color $content_sep_color
+    :border 0
+    :width 40em
+    :margin 1em auto
+    
+    
+  h2.sep
+    :margin-top 1em

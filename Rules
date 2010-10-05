@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+compile '/stylesheets/*/' do
+  filter :sass
+end
+
+compile '/960/*/' do
+end
+
+compile '/assets/*', '/assets/*' do
+end
+
+compile '/*' do
+  filter :haml
+  layout 'default'
+end
+
+route '/stylesheets/*/' do
+  item.identifier.chop + '.css'
+end
+
+route '/960/grid/' do
+  item.identifier.chop + '.css'
+end
+
+route '/assets/*', '/assets/*' do
+  item.identifier.chop.gsub("/assets", "") + '.' + item[:extension]
+end
+
+route '*' do
+  item.identifier + 'index.html'
+end
+
+layout '*', :haml

@@ -1,0 +1,42 @@
+!!! XML
+!!! Strict
+
+%html{:xmlns => "http://www.w3.org/1999/xhtml",  :"xml:lang" => "en", :lang => "en"}
+  %head
+    %meta{:"http-equiv" => "Content-Type", :content => "text/html;charset=UTF-8"}
+    %meta{:"http-equiv" => "content-language", :content => "en" }
+    %meta{:name => "keywords", :content => "Web, Ruby on Rails, Ruby, Rails, Development, TDD, Web development"}
+    %meta{:name => "description", :content => "I'm a freelance web developer. Expert in Ruby on Rails."}
+    %meta{:name => "language", :content => "en" }
+
+
+    %title Rails freelance from Barcelona - Albert Callarisa Roca
+
+    / RESET CSS
+    %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/reset.css"}
+
+    / 960 CSS
+    %link{ :rel => "stylesheet", :type => "text/css", :href => "/960/grid.css" }
+
+    / SITE CSS
+    %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/style.css", :media => "screen, projection" }
+
+    %link{ :rel => "shortcut icon", :href => "/favicon.ico", :type => "image/x-icon"}
+    %link{ :rel => "icon", :href => "/favicon.ico", :type => "image/x-icon"}
+  %body
+    .container_1
+      #header.grid_1= render "header"
+      #content.grid_1=yield
+      #footer.grid_1= render "footer"
+  
+    :javascript
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    
+    :javascript
+      try {
+        var pageTracker = _gat._getTracker("UA-12467222-2");
+        // Cookied already: 
+        pageTracker._trackPageview();
+      } catch(err) {}
+      
