@@ -10,6 +10,10 @@ end
 compile '/assets/*', '/assets/*' do
 end
 
+compile '/icons/*' do
+  filter :thumbnailize, :width => 40
+end
+
 compile '/*' do
   filter :haml
   layout 'default'
@@ -25,6 +29,10 @@ end
 
 route '/assets/*', '/assets/*' do
   item.identifier.chop.gsub("/assets", "") + '.' + item[:extension]
+end
+
+route '/icons/*', :rep => :default do
+  item.identifier.chop + '.' + item[:extension]
 end
 
 route '*' do
