@@ -1,0 +1,4 @@
+# .gems
+rack
+rack-rewrite
+rack-contrib
