@@ -1,10 +1,9 @@
-# config.ru
-require "rubygems"
-require 'rack/contrib'
-require 'rack-rewrite'
+gem 'rack-rewrite', '~> 1.0.0'
+require 'rack/rewrite'
 
 use Rack::Rewrite do
-  rewrite '/', '/index.html'
+  r301 %r{^([^\.]*[^\/])$}, '$1/' 
+  r301 %r{^(.*\/)$}, '$1index.html'
 end
 
 use Rack::Static, :urls => ["/"], :root => Dir.pwd + '/output'
@@ -12,7 +11,7 @@ use Rack::Static, :urls => ["/"], :root => Dir.pwd + '/output'
 # Empty app, should never be reached:
 class Homepage
   def call(env)
-    [200, {"Content-Type" => "text/html"}, ["There's a problem with my website/"] ]
-  end
+    [200, {"Content-Type" => "text/html"}, ["There's a problem with my website. Please report the problem to matthew@matthewlang.co.uk/"] ]
+  end  
 end
 run Homepage.new
