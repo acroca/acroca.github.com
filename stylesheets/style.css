@@ -42,6 +42,11 @@ h3 {
 #header h1 span.small {
   font-size: 0.5em;
   display: block; }
+#header .networks {
+  margin-top: 0.5em; }
+  #header .networks a {
+    display: inline-block;
+    margin-right: 1em; }
 
 #content {
   padding-bottom: 2em; }
@@ -56,5 +61,3 @@ h3 {
     margin: 1em auto; }
   #content h2.sep {
     margin-top: 1em; }
-  #content .networks a {
-    margin-right: 1em; }
