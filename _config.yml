@@ -3,3 +3,6 @@ url: http://acroca.com
 exclude: ["Gemfile", "Gemfile.lock", "Rakefile"]
 gems:
   - jekyll-sitemap
+
+include:
+  - /blog
