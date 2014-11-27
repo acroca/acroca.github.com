@@ -1,0 +1,72 @@
+---
+layout: post
+title: Redis pipelined queries
+---
+<p>
+  A few days ago I discovered a <em>feature</em> in the <a href='https://github.com/ezmobius/redis-rb'>redis gem</a> that is called <code data-language='ruby'>pipeline</code>.
+</p>
+
+<p>
+  In the code for this post I'll use <code data-language='ruby'>REDIS</code> as your redis connection. I use that because in most of the rails projects I've seen it's like that.
+</p>
+
+<h2>Standard way</h2>
+
+<p>
+  Given a connection, you can perform a set of quieries like that:
+  <pre><code data-language='ruby'>
+5000.times do
+  REDIS.lpush "test_#{rand(100)}", "hello world"
+end
+# About 3.3 seconds in heroku with redistogo
+  </code></pre>
+</p>
+
+<p>
+  This pushes 5000 times the value <code data-language='ruby'>"hello world"</code> to a random key from <code data-language='ruby'>test_0</code> to <code data-language='ruby'>test_99</code> in the redis database. It can be improved doing only one mass-push fo each key, but even that you will run 100 queries.
+</p>
+
+<p>
+  If your redis database is remote, it will connect with the database 5000 times (or 100 with mass push), which will take some time just to perform the connection remotelly.
+</p>
+
+<h2>Pipelined way</h2>
+
+<p>
+  To solve that problem, the redis gem have pipelined queries. Let's see the same code but pipelined:
+
+  <pre><code>
+REDIS.pipelined do
+  5000.times do
+    REDIS.lpush &quot;test_#{rand(100)}&quot;, &quot;hello world&quot;
+  end
+end
+# About 0.1 seconds in heroku with redistogo
+  </code></pre>
+</p>
+
+<p>
+  This looks the same, right? Well, internally <code data-language='ruby'>REDIS</code> is not performing the query at all, it's just saving the commands to an array. When the pipelined block is closed, it performs all the queued commands in one single connection.
+</p>
+
+<h2>What can't be done using pipelines</h2>
+
+<p>
+  It sounds perfect but, like everything, has some <em>cons</em>. In a pipelined block you can't get the response of anything in redis because the request it's not performed when you call it.
+</p>
+
+<p>
+  In the following example we can't use pipelines:
+
+  <pre><code>
+5000.times do |i|
+  value = REDIS.get(&quot;test_#{i}&quot;)
+  REDIS.lpush(&quot;all&quot;, value)
+end
+  </code></pre>
+</p>
+
+
+<p>
+  The <code data-language='ruby'>REDIS.get</code> within a pipeline doesn't return the value, so we can't wrap inside pipelines anything that performs operations to get data and do something based on that data.
+</p>

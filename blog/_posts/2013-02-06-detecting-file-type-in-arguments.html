@@ -1,0 +1,55 @@
+---
+layout: post
+title: Detecting File type in arguments
+---
+<p>
+  The other day I needed a method that, based on a file sent in one of the arguments, uploads that file to S3 and returns its URL.
+</p>
+
+<p>
+  Initially I started with somehting like 
+  <pre><code data-language='ruby'>
+def upload(file)
+  if file.is_a?(IO)
+    content = file.read
+    # ...
+  end
+end
+  </code></pre>
+</p>
+
+<p>
+  Since a <code data-language='ruby'>File</code> is a subclass of <code data-language='ruby'>IO</code>, that should work, but it didn't.
+</p>
+
+<p>
+  The problem was that the file is not directly a <code data-language='ruby'>File</code>, it's an uploaded file to Rails, and them seem to be a <code data-language='ruby'>Tempfile</code>. And it happens that <code data-language='ruby'>Tempfile</code> is not a <code data-language='ruby'>File</code>, so it's not an <code data-language='ruby'>IO</code>.
+</p>
+
+<p>
+  So I had to extend the code to detect also <code data-language='ruby'>Tempfile</code>.
+</p>
+
+<p>
+  Not very happy with that, still didn't work.
+</p>
+
+<p>
+  The problem now is that Rails file parameters are instances of a wrapper class with the file in one of the attributes. I didn't want to add another <code data-language='ruby'>if</code> for this new instance type, so I changed the code for
+  <pre><code data-language='ruby'>
+def upload(file)
+  if file.responds_to?(:read)
+    content = file.read
+    # ...
+  end
+end
+  </code></pre>
+</p>
+
+<p>
+  I don't really like this, but it is something all the classes have in common.
+</p>
+
+<p>
+  Does anyone encounter this issue before? Am I missing something here?
+</p>

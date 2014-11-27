@@ -1,0 +1,29 @@
+---
+layout: post
+title: Get access to the Docker host from a container
+---
+
+<p>
+  I'm working a lot on a side project (<a href="http://dolater.io/">dolater.io</a>) where users will be able to run background jobs. The background jobs are docker images and each job will run on its own container.
+</p>
+
+<p>
+  When a user submits a new job my app pushes it to a queue. There are multiple consumers of the queue, and only one will pick the job. When the consumer picks the job, it runs the job.
+</p>
+
+<p>
+  The consumer is running, of course, in Docker. The same Docker host that will process the user's job. So the consumer needs, somehow, access to the Docker host to run the job.
+</p>
+
+<p>
+  Initially I thought I could setup my Docker host to listen to a random port and only the consumer app will know which port to use. But there's a risk of someone writing a job that finds out where's my docker and use it without my permission. I could proxy the http requests through an nginx server and add some kind of authentication that only my consumer has, but that sounds like too much.
+</p>
+
+<p>
+  Another approach, and this is the approach I've chosen, is to not listen to any tcp port and just use the unix socket that Docker creates by default. Since the container needs access to Docker, the consumer container is executed with a host volume with only the unix socket adding <pre><code>-v /var/run/docker.sock:/var/run/docker.sock</code></pre> to the <code>docker run</code> command. With that, only the containers created with that volume has access to the docker host.
+</p>
+
+<p>
+  If anyone thinks this is not a good solution or knows a better one, please let me know.
+</p>
+

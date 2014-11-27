@@ -1,0 +1,79 @@
+---
+layout: post
+title: Varnish ESI with Rails Part 2
+---
+
+<p><small><a href="/blog/2013/02/14/varnish-esi-with-rails-part-1.html">Read part 1 first</a></small></p>
+
+<p>
+  In this part I'll talk more about ESI and how do we use this technology. I think it's interesting because it differs slightly with most of the examples I found online.
+</p>
+
+<p>
+  On our site, some elements in the page are different based on the session, like if the user is logged in, or his/her name.This is a pretty common need, think about a header that shows the user name or for logged out users it will show a login link.
+</p>
+
+<p>
+  Since we have Varnish on top of our Rails app, we can't do the <code>if</code> on the server side because the page has to be exactly the same for all the users. And this is where ESI is very powerful.
+</p>
+
+<p>
+  ESI (Edge Side Includes) is a feature that allows you to tell Varnish to replace a specific tag (the ESI tag) with the content of another request. In the case of the header example you could do something like that
+  <pre><code data-language="html">
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;header&gt;
+      &lt;esi:include src="/header" /&gt;
+    &lt;/header&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+  </pre></code>
+  Varnish will replace the <code>&lt;esi...&gt;</code> tag with whatever response it gets from a request to <code>/header</code>. In that request you will check the user session and return the user-specific rendered header.
+</p>
+
+<p>
+  In our case we decided to minimize the ESI load and simplify it to one single call instead of add an ESI tag everytime we need a user specific elements. That call returns a piece of Javascript that will be used in the client side to 'paint' the regions that are specific for the user. The response for the ESI tag looks like that
+  <pre><code data-language="html">
+&lt;script&gt;var session = {"logged_in":true,"name":"Paul"}&lt;/script&gt;
+  </pre></code>
+  And it's placed right after the beginning of the <code>&lt;body&gt;</code> tag. This Javascript variable <code>session</code> is available almost at the very beginning, so when our JS code is executed we already know if the user is logged in and his/her name. At this point is up to Javacript to render the right template.
+</p>
+
+<p>
+  As an alternative some people uses the cookies to store that information, so you have it available all the time. Using cookies works, but it makes your site a bit slower because every single request the cookies are sent to the server. Also if you need more data, or some dynamic data like a list of elements the user is subscribed, you shouldn't use cookies because they can't store too much.
+</p>
+
+<p>
+  Some other people use AJAX to load the user information, but this way adds some delay in the load time of every single page (you can store it in the local storage in the browser, but... well...). It's not an option for me.
+</p>
+
+<h2>In development environment</h2>
+
+<p>
+  In development we try to keep it simple and we don't have Varnish running in front of the app. To support ESI in development mode we are using the following helper method
+  <pre><code data-language="ruby">
+def render_esi(path)
+  if request.headers["HTTP_X_VARNISH"]
+    "&lt;esi:include src=\"#{path}\" &gt;>"
+  else
+    div_id = Digest::MD5.hexdigest(path + rand.to_s)
+    script = "$.ajax({" +
+      "type:\"GET\"," +
+      "async: false," +
+      "url:\"#{path}\"," +
+      "dataType:\"html\"," +
+      "success:function(html) {$(\"##{div_id}\").html(html)}});"
+    content_tag(:div, '', :id => div_id) + content_tag(:script, script.html_safe, :type => 'text/javascript')
+  end
+end
+  </code></pre>
+  This will perform a synchronous AJAX request instead of replacing the content. It's not exactly the same but it works for us.
+</p>
+
+<h2>Conclusion</h2>
+
+<p>
+  To me this looks like a very good solution for dynamic content in a http-cached apps application. I find it very clean, reliable and easier to maintain (compared with the cookies solution) because the browser just stores the session token.
+  At the time I'm writing this post we still didn't run this in production environment so I can't tell too much about numbers.
+<p>

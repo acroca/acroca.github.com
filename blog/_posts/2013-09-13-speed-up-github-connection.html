@@ -1,0 +1,51 @@
+---
+layout: post
+title: Speed up Github connection
+---
+
+<p>
+  I live in Singapore. This is the standard time a <code>git pull</code> takes:
+  <pre><code>
+$ time git pull
+Already up-to-date.
+
+real  0m5.272s
+user  0m0.045s
+sys 0m0.037s
+  </code></pre>
+</p>
+
+<p>
+  It's a bit annoying to wait so much every single time git needs to access the github remote.
+  To solve that, it's possible to keep a ssh connection open with github and use it instead of opening a new one every time.
+</p>
+
+<p>
+  To do so, add the following lines to your <code>~/.ssh/config</code> file:
+  <pre><code>
+Host github.com
+  TCPKeepAlive yes
+  ServerAliveInterval 60
+  ControlMaster auto
+  ControlPath ~/.ssh/connection-%r@%h:%p
+  </code></pre>
+</p>
+
+<p>
+  After that, to keep a connection open with github run the following command and send it to the background:
+  <pre><code>
+ssh -fN git@github.com
+  </code></pre>
+</p>
+
+<p>
+  When this is running, this is the new time for a git pull:
+  <pre><code>
+$ time git pull
+Already up-to-date.
+
+real  0m1.593s
+user  0m0.032s
+sys 0m0.033s
+  </code></pre>
+</p>

@@ -1,0 +1,30 @@
+---
+layout: post
+title: Disable ssl to boot2docker
+---
+
+<p>
+  I use <a href="https://github.com/boot2docker/boot2docker">boot2docker</a> to have docker on OSX. I use it a lot, my side project (<a href="http://dolater.io/">dolater.io</a>) is a docker based background jobs runner. <br>
+  Internally I use the <a href="https://docs.docker.com/reference/api/docker_remote_api/">Docker Remote API</a> and, even though is not recommended, I disable the encryption on the TCP socket and I found it a bit hard to find how to disable it.
+</p>
+
+<p>
+  The reason why I disable TCP is because I have very different environments running docker and all of them are accessible in a secure way, never get orders from the outside on runtime, always from inside. So I want to code the client that work on all systems and I don't want to worry about the SSL since it doesn't make any difference in my case.
+</p>
+
+<p>
+  The first thing to do is ssh into the virtual machine with <code>boot2docker ssh</code>. Once inside the machine, run <code>sudo vi /var/lib/boot2docker/profile</code> and add the following line:
+  <pre><code>DOCKER_TLS="no"</code></pre>
+  And restart the docker host with <code>boot2docker restart</code>.
+</p>
+
+<p>
+  You can see more environment variables you can tweak reading <a href="https://github.com/SvenDowideit/boot2docker/blob/master/rootfs/rootfs/usr/local/etc/init.d/docker">the docker init.d script on boot2docker</a>
+  </p>
+
+<p>
+  From now on remember that your local docker host is not encrypted, so you'll probably need to change the environment variables accordingly. In my case I have the following:
+  <pre><code>$ env | grep DOCKER
+DOCKER_HOST=tcp://192.168.59.103:2376
+DOCKER_TLS_VERIFY=</code></pre>
+</p>

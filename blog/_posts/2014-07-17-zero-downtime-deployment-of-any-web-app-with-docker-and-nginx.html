@@ -1,0 +1,72 @@
+---
+layout: post
+title: Zero downtime deployment of any web app with Docker and Nginx
+---
+
+<p>
+  In this post I'll explain how to deploy any web app in Docker with zero downtime using nginx. I used this setup with Node.js, Go and Ruby web apps, but it should work with any web app.
+</p>
+
+<p>
+  The main idea is to have multiple containers running our web app and a container running nginx with our web server as upstream. When we start new web app instances we just update the upstream to point to the new instances and reload nginx config.
+</p>
+
+<p>
+  First things first, start two app containers:
+  <pre><code>docker run -d --name app1 -p :3000 app
+docker run -d --name app2 -p :3000 app</code></pre>
+</p>
+
+<p>
+  Next we will run nginx with the following extra config files:
+</p>
+
+<p><code>api.conf</code>:
+<pre><code>server {
+  listen 4000;
+
+  location / {
+    proxy_pass http://api_servers;
+  }
+}</code></pre></p>
+
+<p><code>api_upstream.conf</code>:
+<pre><code>upstream api_servers {
+  server localhost:3000;
+}
+</code></pre></p>
+
+<p>
+  Now, when we run the nginx container, we should create a volume on the folder where we store the config files. Something like:
+  <pre><code>docker run -d -v /opt/nginx/sites-available --name nginx nginx</code></pre>
+  Assuming we have those two config files in <code>/opt/nginx/sites-available</code>.
+</p>
+
+<p>
+  Since the config files are available as a volume, we can run a new container to update the upstream config file. For that we will need to get the ports mapped of the web servers doing <code>docker ps</code> or <code>docker port app1 3000</code>. Assuming the host IP is 10.0.1.84 we should now update the upstream config file of nginx:
+  <pre><code>docker run --rm --volumes-from nginx nginx bash -c '/
+echo "upstream api_servers {\n/
+  server http://10.0.1.84:$(docker port app1 3000);\n/
+  server http://10.0.1.84:$(docker port app2 3000);\n/
+}" > /opt/nginx/sites-available/api_upstream.conf'</code></pre>
+</p>
+
+<p>
+  Once this is done, we can now tell nginx to reload the config:
+  <pre><code>docker kill -s HUP nginx</code></pre>
+  And from now on nginx will be proxying the requests to both upstream servers.
+</p>
+
+<p>
+  The steps to deploy a new code using this setup will be:
+  <ol>
+    <li>Update the web app image</li>
+    <li>Run the new app containers</li>
+    <li>Update again the upstream config file with the new ports</li>
+    <li>Reload nginx config</li>
+  </ol>
+</p>
+
+<p>
+  I hope this is useful.
+</p>

@@ -1,0 +1,111 @@
+---
+layout: post
+title: Varnish ESI with Rails Part 1
+---
+
+<p>
+  This last few days I spent some time adding Varnish in front of a Rails app. My previous experience with Varnish is basically the old times in Heroku, a magic non-configurable Varnish layer on top of your app. This time we're setting up our own infrastructure, including Varnish.
+</p>
+
+<p>
+  Some of the details about the application and its caching requirements that might affect the Varnish setup are:
+  <ol>
+    <li>The app itself will set cache headers depending on the page.</li>
+    <li>The page content will change depending on the value of some headers.<br />For example two requests, one with <code>X-SOMETHING: a</code> and another one with <code>X-SOMETHING: b</code> will not have the same content, so will not share cache. (see <a href="http://stackoverflow.com/questions/1975416/trying-to-understand-the-vary-http-header">Trying to understand the “Vary” HTTP header</a> StackOverflow thread)</li>
+    <li>Some elements in the page might be user specific, for example the header with the user's profile picture.</li>
+  </ol>
+</p>
+
+<h2>First steps</h2>
+
+<p>
+  The first thing to do is get Varnish, process that I will not describe here. In order to run Varnish we need to create the configuration file, see <a href="https://www.varnish-cache.org/docs/3.0/reference/vcl.html">VCL</a> documentation.
+</p>
+
+<p>
+  Here I paste a sample VCL file with some comments. I took most of it from other examples.
+  <pre><code>
+backend default {
+    .host = "yourapphost.com";
+    .port = "80";
+}
+sub vcl_recv {
+  set req.grace = 10m;
+
+  # This rule is to insert the client's ip address into the request header
+  if (req.restarts == 0) {
+    if (req.http.x-forwarded-for) {
+      set req.http.X-Forwarded-For = req.http.X-Forwarded-For +", "+ client.ip;
+    } else {
+      set req.http.X-Forwarded-For = client.ip;
+    }
+  }
+
+  # Don't cache requests other than GET or HEAD
+  if (req.request != "GET" && req.request != "HEAD") {
+    return (pass);
+  }
+
+  return(lookup);
+}
+
+sub vcl_pipe {
+  set bereq.http.connection = "close";
+  return(pipe);
+}
+
+sub vcl_fetch {
+  set beresp.grace = 10m;
+  if (beresp.http.Cache-Control ~ "max-age") {
+    unset beresp.http.Set-Cookie;
+    return(deliver);
+  }
+  return(hit_for_pass);
+}
+
+sub vcl_deliver {
+  # The below provides custom headers to indicate whether the response came from
+  # varnish cache or directly from the app.
+  if (obj.hits > 0) {
+    set resp.http.X-Varnish-Cache = "HIT";
+  } else {
+    set resp.http.X-Varnish-Cache = "MISS";
+  }
+}
+  </code></pre>
+</p>
+
+<p>
+  With that simple Varnish script all is ready to run varnish.
+</p>
+
+<p>
+  Run <code>varnishd -a 0.0.0.0:8080 -s malloc,500M -F -f varnish.vcl</code> to run it <strong>locally</strong> for testing. This will basically run Varnish on port 8080 with 500M cache in memory using the config file <code>varnish.vcl</code>. Any http request to the port 8080 will be handled by Varnish, either delegating it to the webserver or returning it from its cache. You can check the response headers to validate it is working.
+</p>
+
+<h2>Integration with Rails</h2>
+
+<p>
+  At this point Varnish is already working on top of the rails server.<br />
+  The Varnish configuration needs the webapp to set a <code>max-age</code> in the <code>Cache-Control</code> header in order to cache it in Varnish.
+</p>
+
+<p>
+  To do so, put the following line somewhere in the code of your action.
+  <pre><code data-language='ruby'>
+class PostsController < ApplicationController
+  def index
+    # Your index action code
+    # ...
+    expires_in 30.seconds, public: true
+  end
+end
+  </code></pre>
+  This will tell Varnish to cache the whole response for 30 seconds. You can validate sending requests through Varnish and checking the <code>X-Varnish-Cache</code> header value.
+</p>
+
+<h2>Conclusion</h2>
+
+<p>
+  This is all for this part. So far this is too basic, quite straight-forward. This is not really the most interesting part of our setup. Next parts will include the Vary header configuration and the user-specific content using <a href="http://en.wikipedia.org/wiki/Edge_Side_Includes">ESI</a>.
+</p>

@@ -1,0 +1,50 @@
+---
+layout: post
+title: API security
+---
+
+<p>
+  Recently I changed my job. My new company(<a href="http://www.piethis.com">Piethis.com</a>) is a recently created start-up and I'm the first engineer. My first mission is to design the initial architecture and start its implementation.
+</p>
+
+<p>
+  We split the app in two parts, backend and client. The backend is a restful API written in Node.js. The client is not sure yet, but most probably will be an <a href="http://angularjs.org/">Angular.js</a> app. Eventually we'll have mobile applications and probably some other apps (more like the standard rails apps) accessing that API.
+</p>
+
+<p>
+  We need different permissions for each client of the API. For example, the browser client probably won't have permission to register users, they will follow a different workflow that is not clear yet, but it's just an example.
+</p>
+
+<p>
+  Our approach to secure the API is signing the requests with some secret word, different for each client app.
+</p>
+
+<p>
+  All requests will have to send three headers to the API, <code>X-Pie-App</code>, <code>X-Pie-Time</code> and <code>X-Pie-Signature</code>.
+</p>
+<p>
+  The <code>X-Pie-App</code> is the application identifier, for example <code>browser-app</code> could be the app ID for the Angular.js client app.
+</p>
+<p>
+  The <code>X-Pie-Time</code> is the current time in seconds. This is used to expire requests, a signed request is only valid for some minutes.
+</p>
+<p>
+  The <code>X-Pie-Signature</code> is the signature. To generate the signature the client will have to generate string like <code>&lt;app&gt;&lt;time&gt;&lt;url&gt;&lt;rawBody&gt;</code> and encrypt it using <a href="http://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a>-<a href="http://en.wikipedia.org/wiki/SHA-1">SHA1</a>. The secret for the HMAC is unique for the application.
+</p>
+
+<p>
+  Benefits of this approach:
+  <ul>
+    <li>A client can't sign request on behalf of another application (because it doesn't know its secret).</li>
+    <li>Every request is new(ish), the time in the header and in the signed text must be the same. When this time is older than X minutes, it's invalid.</li>
+    <li>The url and body is the one the client sent, there's no way to modify a request url or body after generating the signature, that will make the request invalid.</li>
+  </ul>
+</p>
+
+<h2>Conclusion</h2>
+<p>
+  I'm happy with this approach, it gives a lot of security to protect some restricted actions. The only problem is the development workflow, sending requests to the API is complicated, I had to create a script that generates http requests (using httpie) with the three headers.
+</p>
+<p>
+  Also I couldn't find any good way to implement this signature process using <a href="http://docs.angularjs.org/api/ngResource.$resource">Angular.js resources</a>. For now we're using <a href="https://gist.github.com/acroca/6227680">this hack</a> but I don't like it.
+</p>
