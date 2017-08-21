@@ -1,4 +1,4 @@
-title: Coding stuff...
+title: Albert Callarisa Tech blog
 url: http://acroca.com
 exclude: ["Gemfile", "Gemfile.lock", "Rakefile"]
 gems:
