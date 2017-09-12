@@ -2,12 +2,20 @@
 layout: default
 ---
 <header>
-  <a href="{{ site.baseurl }}/blog/">{{ site.title }}</a>
+  <div class="wrapper">
+    <h1><a href="/">Albert Callarisa Roca</a></h1>
+    <h2><a href="/blog/">Tech blog</a></h2>
+  </div>
 </header>
 <section>
-  <ul>
-    {% for post in site.posts %}
-      <li>{{ post.date | date_to_string }}: <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+  <div class="wrapper">        
+    <ul>
+      {% for post in site.posts %}
+        <li>
+          <span class="date">{{ post.date | date_to_string }}</span>
+          <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>

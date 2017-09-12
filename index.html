@@ -12,49 +12,71 @@
       article,aside,details,figcaption,figure,header,hgroup,main,nav,section,summary{display:block}html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body{margin:0}a:focus{outline:thin dotted}a:active,a:hover{outline:0}h1{font-size:2em;margin:.67em 0}b,strong{font-weight:bold}
 
       body {
-          font-family: Helvetica;
-          font-size: 18px;
-          color: #252525
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 18px;
+        color: #111;
+        font-weight: 300;
       }
-      header,
-      section {
-          margin: 0 auto 10px auto;
-          padding: 10px;
+      .wrapper {
+        margin: 0 auto 10px auto;
+        padding: 10px;
       }
-      header { 
-          text-align: center;
-      }
-      @media (min-width: 730px){
-        header,
-        section {
-            width: 600px;
+      @media (min-width: 730px) {
+        .wrapper {
+          width: 600px;
         }
       }
-      @media (max-width: 730px){
-        header,
-        section {
-            width: 83%;
+      @media (max-width: 730px) {
+        .wrapper {
+          width: 83%;
         }
+      }
+      a,
+      a:visited {
+        color: #31418A;
+        font-weight: 100;
       }
       h1 {
-          font-size: 3em;
-          margin: 10px
+        font-size: 1.2em;
+        margin: 10px;
+        display: inline;
+        font-weight: 100;
+      }
+      .homepage h1 {
+        font-size: 1.7em;
+      }
+      header a {
+        text-decoration: none;
+        color: #111 !important;
+      }
+      header a:hover {
+        text-decoration: underline;
       }
       h2 {
-          font-size: 1.2em;
-          margin: 10px;
-          margin-top: 30px;
+        font-size: .9em;
+        margin: 0;
+        display: inline;
+      }
+      h3 {
+        position: relative;
+        font-size: 1.2em;
       }
       li {
-          list-style: none;
-          padding: 3px
+        list-style: none;
+        padding: 3px;
+        margin-bottom: 10px;
       }
       ul {
-          margin: 0;
-          padding: 0
+        margin: 0;
+        padding: 0
+      }
+      .date {
+        font-size: 0.7em;
+        display: table;
+        color: #909090;
       }
       p {
-          margin: 0 0 10px 0
+        margin: 0 0 10px 0
       }
     </style>
     <script>
@@ -70,29 +92,33 @@
   </head>
 
   <body>
-    <header>
-      <h1>Albert Callarisa Roca</h1>
+    <header class="homepage">
+      <div class="wrapper">
+        <h1><a href="/">Albert Callarisa Roca</a></h1>
+      </div>
     </header>
     <section>
-      <p>
-        I am a software engineer consultant with over ten years of experience in
-        which I've focused on <b>backend development</b> and
-        <b>scalability</b>.<br>
-        The languages/frameworks I'm more confortable with as of today are
-        <i>Go</i>, <i>Node.js</i>, <i>Elixir</i>, <i>Ruby</i> and <i>C#</i>.
-      </p>
-      <p>
-        If you are interested in hiring me or getting more information feel free to <a href="mailto:albert@acroca.com">contact me</a>.
-        I can provide technical advice, scalable solutions, backend design and implementation, etc.
-      </p>
-      <h2>Online presence</h2>
-      <ul>
-        <li><a href="mailto:albert@acroca.com">albert@acroca.com</a></li>
-        <li><a href="/blog/">Tech blog</a></li>
-        <li><a href="http://github.com/acroca">Github</a></li>
-        <li><a href="http://www.linkedin.com/in/shark234">LinkedIn</a></li>
-        <li><a href="http://twitter.com/ac_roca">@ac_roca</a></li>
-      </ul>
+      <div class="wrapper">
+        <p>
+          I am a software engineer consultant with over ten years of experience in
+          which I've focused on <b>backend development</b> and
+          <b>scalability</b>.<br>
+          The languages/frameworks I'm more confortable with as of today are
+          <i>Go</i>, <i>Node.js</i>, <i>Elixir</i>, <i>Ruby</i> and <i>C#</i>.
+        </p>
+        <p>
+          If you are interested in hiring me or getting more information feel free to <a href="mailto:albert@acroca.com">contact me</a>.
+          I can provide technical advice, scalable solutions, backend design and implementation, etc.
+        </p>
+        <h2>Online presence</h2>
+        <ul>
+          <li><a href="mailto:albert@acroca.com">albert@acroca.com</a></li>
+          <li><a href="/blog/">Tech blog</a></li>
+          <li><a href="http://github.com/acroca">Github</a></li>
+          <li><a href="http://www.linkedin.com/in/shark234">LinkedIn</a></li>
+          <li><a href="http://twitter.com/ac_roca">@ac_roca</a></li>
+        </ul>
+      </div>
     </section>
   </body>
 
