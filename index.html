@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta content='en' http-equiv='content-language' />
     <meta content='Ruby on Rails, Ruby, Rails, NodeJS, Web development, Web developer' name='keywords' />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Albert Callarisa Roca</title>
     <style>
       /*! normalize.css v2.1.0 | MIT License | git.io/normalize */
@@ -20,15 +21,11 @@
       .wrapper {
         margin: 0 auto 10px auto;
         padding: 10px;
-      }
-      @media (min-width: 730px) {
-        .wrapper {
-          width: 600px;
-        }
+        width: 600px;
       }
       @media (max-width: 730px) {
         .wrapper {
-          width: 83%;
+          width: 90%;
         }
       }
       a,
@@ -41,9 +38,6 @@
         margin: 10px;
         display: inline;
         font-weight: 100;
-      }
-      .homepage h1 {
-        font-size: 1.7em;
       }
       header a {
         text-decoration: none;
@@ -62,13 +56,15 @@
         font-size: 1.2em;
       }
       li {
-        list-style: none;
         padding: 3px;
         margin-bottom: 10px;
       }
       ul {
         margin: 0;
         padding: 0
+      }
+      ul.index, ul.sites {
+        list-style: none;
       }
       .date {
         font-size: 0.7em;
@@ -111,7 +107,7 @@
           I can provide technical advice, scalable solutions, backend design and implementation, etc.
         </p>
         <h2>Online presence</h2>
-        <ul>
+        <ul class="sites">
           <li><a href="mailto:albert@acroca.com">albert@acroca.com</a></li>
           <li><a href="/blog/">Tech blog</a></li>
           <li><a href="http://github.com/acroca">Github</a></li>
