@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/acroca
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://acroca.com
+  * I am acroca (https://keybase.io/acroca) on keybase.
+  * I have a public key ASB6dJV-oFIeVxD-nHsC0I47K6k8G4etETRcAHVMxh2cEwo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01207a74957ea0521e5710fe9c7b02d08e3b2ba93c1b87ad11345c00754cc61d9c130a",
+      "host": "keybase.io",
+      "kid": "01207a74957ea0521e5710fe9c7b02d08e3b2ba93c1b87ad11345c00754cc61d9c130a",
+      "uid": "f475a119bca78f12c9d68adf90b23219",
+      "username": "acroca"
+    },
+    "merkle_root": {
+      "ctime": 1541600838,
+      "hash": "37ff8e398e90c906f56d10409179483daaee834a270ce84dfbaa58b779f4b743c245e5935472406809932d7da6c54d84f62f6b525b50a9b78a7f1cfeb507900a",
+      "hash_meta": "58ca115f8fcd797bec2791f15b45f6d16c41815079fb85fd2d88cd6e0b210c4d",
+      "seqno": 3914765
+    },
+    "service": {
+      "entropy": "g2bjXh1JAZwIGxUGLCF9wpg2",
+      "hostname": "acroca.com",
+      "protocol": "http:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "2.9.0"
+  },
+  "ctime": 1541600882,
+  "expire_in": 504576000,
+  "prev": "4c22006d6d380ca66ddc3f31e9a8db972fefb916a68e2b75478a23af9a15b232",
+  "seqno": 15,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgenSVfqBSHlcQ/px7AtCOOyupPBuHrRE0XAB1TMYdnBMKp3BheWxvYWTESpcCD8QgTCIAbW04DKZt3D8x6ajbly/vuRamjit1R4ojr5oVsjLEIK/ugND7gax2IrfNIz3flpNZM6wRV9M1e0ddj/Fdwx7UAgHCo3NpZ8RA5lC1yFH3+cWWsrYvIYjtf0mgcRlSGLsyuynaD3r1mUk99UF/7slVEhH0tioR6fW/Bx5EMSUt/5RJbmo49FQdDKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIPQmBFSC/WkfgoM6swiznXiuRiSkIKjbZ9fwARRDaPZ7o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/acroca
+
+==================================================================
